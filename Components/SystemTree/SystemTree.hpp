@@ -32,20 +32,18 @@ class SystemTree : public Node
 		bool	loadDirectory(const std::string &path, std::size_t deep = 0);
 
 		// accessors
-		const std::vector<SystemTree>	&getNodes(void) const;
-		const SystemTree				&getNode(const std::string &path) const;
-		//const Vector::string				&getPaths(void) const;
-		//const Vector::string				&getNames(void) const;
+		const std::vector<SystemTree>		&getNodes(void) const;
+		const SystemTree					&getNode(const std::string &path) const;
+		const json							&getPaths(void) const;
+		const json							&getNames(void) const;
 		const std::size_t					&getDeep(void) const;
 		const status						&getStatus(void) const;
 
 		void								clear(void);
-		const SystemTree				*findNode(const std::string &path);
+		const SystemTree					*findNode(const std::string &path);
 
 	private:
 		Data								_infos;
-		//Vector::string						_paths;
-		//Vector::string						_names;
 		std::vector<SystemTree>				_nodes;
 		std::size_t							_deep;
 		status								_status;

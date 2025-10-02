@@ -6,15 +6,15 @@ const std::vector<SystemTree>	&SystemTree::getNodes(void) const
 	return (this->_nodes);
 }
 
-//const Vector::string	&SystemTree::getPaths(void) const
-//{
-//	return (this->_paths);
-//}
+const json	&SystemTree::getPaths(void) const
+{
+	return (this->_infos[PATHS]);
+}
 
-//const Vector::string	&SystemTree::getNames(void) const
-//{
-//	return (this->_names);
-//}
+const json	&SystemTree::getNames(void) const
+{
+	return (this->_infos[NAMES]);
+}
 
 const std::size_t	&SystemTree::getDeep(void) const
 {
