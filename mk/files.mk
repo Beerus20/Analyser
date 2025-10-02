@@ -1,9 +1,21 @@
 DIRECTORIES					= \
+								Utils									\
+								SystemTree
+
+DIR_UTILS					= \
+								Data.cpp								\
+								Utils.cpp
+
+DIR_SYSTEMTREE				= \
+								Node.accessors.cpp						\
+								Node.cpp								\
+								SystemTree.accessors.cpp				\
+								SystemTree.cpp
 
 
 FILES						= \
 								$(foreach dir, $(DIRECTORIES), \
-									$(addprefix $(dir)/, $(DIR_$(shell echo $(dir) | tr a-z A-Z))) \
+									$(addprefix Components/$(dir)/, $(DIR_$(shell echo $(dir) | tr a-z A-Z))) \
 								)
 
 OBJS						= \
@@ -24,4 +36,3 @@ TEST_FILES					= \
 								)
 
 FILES_NOT_TESTED			= $(filter-out $(TEST_FILES), $(TO_TEST_FILES))
-

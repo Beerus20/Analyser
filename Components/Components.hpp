@@ -2,5 +2,6 @@
 # define __COMPONENTS_HPP__
 
 # include <iostream>
+# include "SystemTree/SystemTree.hpp"
 
 #endif

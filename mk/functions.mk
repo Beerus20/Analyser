@@ -43,7 +43,7 @@ output/%.o: $(1)/%.cpp | output
 	@$(call create_object, $$<, $$@)
 endef
 
-$(foreach dir, $(DIRECTORIES), $(eval $(call create_rule, $(dir))))
+$(foreach dir, $(DIRECTORIES), $(eval $(call create_rule, Components/$(dir))))
 
 
 # GIT ==========================================================
