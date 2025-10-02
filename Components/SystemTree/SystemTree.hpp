@@ -17,6 +17,7 @@ class SystemTree : public Node
 {
 	public:
 		static json	tree;
+		
 		enum status
 		{
 			SUCCESS,

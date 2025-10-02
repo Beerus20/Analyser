@@ -37,10 +37,12 @@ class Node
 		};
 
 		Node(void);
+		Node(const Node &&other);
 		Node(const std::string &path);
 		Node(const Node&);
 		virtual ~Node(void);
 		Node				&operator=(const Node&);
+		Node				&operator=(const Node&&);
 		std::ostream		&print(std::ostream& os) const;
 
 		const std::string	&getName(void) const;

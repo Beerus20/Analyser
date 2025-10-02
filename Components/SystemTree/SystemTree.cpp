@@ -49,9 +49,7 @@ bool	SystemTree::load(const std::string &path, json &data, std::size_t deep)
 	if (!this->init(tmp_path))
 		return (false);
 	if (deep == 0)
-	{
 		return (true);
-	}
 	if (this->getType() == NODE_DIRECTORY)
 	{
 		if (!this->loadDirectory(tmp_path, data, --deep))
@@ -82,10 +80,7 @@ bool	SystemTree::loadDirectory(const std::string &path, json &data, std::size_t 
 		if ((!name.empty() && name[0] != '.') && name != ".." && name != "./" && name != "../")
 		{
 			data["contents"][name] = "";
-			this->_infos[NAMES].push_back(name);
-			this->_infos[PATHS].push_back(path + (path == "./" || path == "/" ? "" : "/") + name);
-			this->_nodes.push_back(SystemTree());
-			if (!this->_nodes.back().load(this->_infos[PATHS].back(), data["contents"][name], deep))
+			if (!this->load(path + (path == "./" || path == "/" ? "" : "/") + name, data["contents"][name], deep))
 				return (false);
 		}
 		content = readdir(dir);

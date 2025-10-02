@@ -58,7 +58,7 @@ define create_commit
 				COMMIT_MESSAGE="$(1)"; \
 			fi; \
 			if [ -z "$$COMMIT_MESSAGE" ]; then \
-				COMMIT_MESSAGE="chore: Auto-commit on $$(date)"; \
+				COMMIT_MESSAGE="Auto-commit on $$(date)"; \
 			fi; \
 			git add .; \
 			git status; \

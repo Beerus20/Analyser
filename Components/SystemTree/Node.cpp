@@ -1,6 +1,12 @@
 #include "Node.hpp"
+#include <utility>
 
 Node::Node(void) {}
+
+Node::Node(const Node &&other)
+{
+	*this = std::move(other);
+}
 
 Node::Node(const std::string &path)
 {
@@ -24,6 +30,21 @@ Node &Node::operator=(const Node &other)
 		this->_size = other._size;
 		this->_type = other._type;
 		this->_permissions = other._permissions;
+	}
+	return (*this);
+}
+
+Node	&Node::operator=(const Node &&other)
+{
+	if (this != &other)
+	{
+		this->_stat = std::move(other._stat);
+		this->_name = std::move(other._name);
+		this->_path = std::move(other._path);
+		this->_size = std::move(other._size);
+		this->_type = std::move(other._type);
+		this->_permissions = std::move(other._permissions);
+		this->_is_inited = other._is_inited;
 	}
 	return (*this);
 }
