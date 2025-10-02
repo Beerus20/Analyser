@@ -9,7 +9,7 @@ json	SystemTree::tree;
 
 SystemTree::SystemTree(void) {}
 SystemTree::SystemTree(const SystemTree &other) : Node(other) { *this = other; }
-SystemTree::SystemTree(const SystemTree &&other) : Node(std::move(other)) { *this = std::move(other); }
+SystemTree::SystemTree(SystemTree &&other) noexcept : Node(std::move(other)) { *this = std::move(other); }
 SystemTree::~SystemTree(void) {}
 SystemTree &SystemTree::operator=(const SystemTree &other)
 {
@@ -18,15 +18,19 @@ SystemTree &SystemTree::operator=(const SystemTree &other)
 	return (*this);
 }
 
-SystemTree &SystemTree::operator=(const SystemTree &&other)
+SystemTree &SystemTree::operator=(SystemTree &&other) noexcept
 {
 	if (this != &other)
+	{
 		this->_infos = std::move(other._infos);
+		other._infos = NULL;
+	}
 	return (*this);
 }
 
 std::ostream& SystemTree::print(std::ostream& os) const
 {
+	std::cout << this->_infos << std::endl;
 	return os;
 }
 
@@ -41,15 +45,16 @@ bool	SystemTree::load(const std::string &path, json &data, std::size_t deep)
 
 	if (!this->init(tmp_path))
 		return (false);
+	this->initJsonInfo(data);
 	if (deep == 0)
 		return (true);
-	if (this->getType() == NODE_DIRECTORY)
+	if (this->getType() == NodeType::DIRECTORY)
 	{
 		if (!this->loadDirectory(tmp_path, data, --deep))
-			return (this->clear(), false);
+			return (false);
 	}
-	if (this->getType() == NODE_UNKNOW)
-		return (this->clear(), false);
+	if (this->getType() == NodeType::UNKNOW)
+		return (false);
 	return (true);
 }
 
@@ -63,14 +68,11 @@ bool	SystemTree::loadDirectory(const std::string &path, json &data, std::size_t 
 	if (dir == NULL)
 		return (false);
 	content = readdir(dir);
-	data = json();
-	data["path"] = path;
 	while (content != NULL)
 	{
 		name = content->d_name;
-		if ((!name.empty() && name[0] != '.') && name != ".." && name != "./" && name != "../")
+		if (name != "." && name != ".." && name != "./" && name != "../")
 		{
-			data["contents"][name] = "";
 			if (!this->load(path + (path == "./" || path == "/" ? "" : "/") + name, data["contents"][name], deep))
 				return (false);
 		}
@@ -78,10 +80,6 @@ bool	SystemTree::loadDirectory(const std::string &path, json &data, std::size_t 
 	}
 	closedir(dir);
 	return (true);
-}
-
-void	SystemTree::clear(void)
-{
 }
 
 std::string	SystemTree::checkPath(const std::string &path)
@@ -98,6 +96,21 @@ std::string	SystemTree::checkPath(const std::string &path)
 		pos--;
 	tmp = tmp.erase(pos + 1);
 	if (tmp != "/")
-		tmp = "./" + tmp;
+		tmp = "./" + (tmp == "." ? "" : tmp);
 	return (tmp);
+}
+
+void	SystemTree::initJsonInfo(json &data)
+{
+	const Node::permissions	&permissions(this->getPersmissions());
+
+	data = json();
+	data["path"] = this->getPath();
+	data["size"] = this->getSize();
+	data["permissions"] = {
+		{"user", {permissions.user.read, permissions.user.write, permissions.user.execute}},
+		{"group", {permissions.group.read, permissions.group.write, permissions.group.execute}},
+		{"other", {permissions.other.read, permissions.other.write, permissions.other.execute}}
+	};
+	data["type"] = this->getType();
 }

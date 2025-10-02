@@ -22,9 +22,13 @@ const json	&Data::operator[](const std::string &key) const
 	return (this->_content[key]);
 }
 
+const json	&Data::getContent(void) const
+{
+	return (this->_content);
+}
+
 std::ostream	&operator<<(std::ostream &os, const Data &to_show)
 {
-	(void)to_show;
-	os << "Print Data not configured" << std::endl;
+	os << to_show.getContent() << std::endl;
 	return (os);
 }

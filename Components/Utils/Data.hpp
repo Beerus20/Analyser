@@ -17,6 +17,7 @@ class Data
 		Data		&operator=(const Data &other);
 		json		&operator[](const std::string &key);
 		const json	&operator[](const std::string &key) const;
+		const json	&getContent(void) const;
 };
 
 std::ostream	&operator<<(std::ostream &os, const Data &to_show);

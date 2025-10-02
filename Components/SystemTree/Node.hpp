@@ -8,21 +8,28 @@
 
 typedef struct stat	Stat;
 
-enum NodeType
+enum class NodeType
 {
-	NODE_DIRECTORY,
-	NODE_FILE,
-	NODE_LINK,
-	NODE_SCHAR,
-	NODE_BLOC,
-	NODE_FIFO,
-	NODE_SOCKET,
-	NODE_UNKNOW
+	DIRECTORY,
+	FILE,
+	LINK,
+	SCHAR,
+	BLOC,
+	FIFO,
+	SOCKET,
+	UNKNOW
+};
+
+enum class NodeFilterType
+{
+	ONLY_HIDDEN,
+	WITHOUT_HIDDEN,
+	ALL
 };
 
 class Node
 {
-	public:
+	protected:
 		struct permission
 		{
 			bool	read;
@@ -37,13 +44,13 @@ class Node
 		};
 
 		Node(void);
-		Node(const Node &&other);
-		Node(const std::string &path);
-		Node(const Node&);
+		Node(NodeFilterType filter);
+		Node(const std::string &path, NodeFilterType filter = NodeFilterType::WITHOUT_HIDDEN);
+		Node(const Node &other);
+		Node(Node &&other);
 		virtual ~Node(void);
-		Node				&operator=(const Node&);
-		Node				&operator=(const Node&&);
-		std::ostream		&print(std::ostream& os) const;
+		Node				&operator=(const Node &);
+		Node				&operator=(Node &&);
 
 		const std::string	&getName(void) const;
 		const std::string	&getPath(void) const;
@@ -61,7 +68,7 @@ class Node
 
 		static NodeType		checkType(Stat stat);
 		static permissions	checkPermissions(Stat stat);
-
+		static bool			checkFilter(const std::string &path, const NodeFilterType &filter);
 
 	private:
 		Stat				_stat;
@@ -69,11 +76,10 @@ class Node
 		std::string			_path;
 		std::size_t			_size;
 		NodeType			_type;
+		NodeFilterType		_filter;
 		permissions			_permissions;
 		bool				_is_inited;
 
 };
-
-std::ostream& operator << ( std::ostream& os, const Node &node);
 
 #endif

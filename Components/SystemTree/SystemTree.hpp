@@ -26,27 +26,21 @@ class SystemTree : public Node
 
 		SystemTree (void);
 		SystemTree (const SystemTree &);
-		SystemTree (const SystemTree &&);
+		SystemTree (SystemTree &&) noexcept;
 		virtual ~SystemTree (void);
 		SystemTree &operator=(const SystemTree &);
-		SystemTree &operator=(const SystemTree &&);
-		
+		SystemTree &operator=(SystemTree &&) noexcept;
+
 		std::ostream& print(std::ostream& os) const;
 
 		bool	load(const std::string &path, json &data, std::size_t deep = 1);
-		bool	loadDirectory(const std::string &path, json &data, std::size_t deep = 0);
-
-		// accessors
-		const json							&getPaths(void) const;
-		const json							&getNames(void) const;
-
-		void								clear(void);
 
 	private:
-		Data								_infos;
+		json			_infos;
 
-		std::string							checkPath(const std::string &path);
-
+		std::string		checkPath(const std::string &path);
+		bool			loadDirectory(const std::string &path, json &data, std::size_t deep = 0);
+		void			initJsonInfo(json &data);
 };
 
 std::ostream& operator << ( std::ostream& os, const SystemTree &httpsystemtree);

@@ -1,14 +1,9 @@
 #include "Node.hpp"
 #include <utility>
 
-Node::Node(void) {}
-
-Node::Node(const Node &&other)
-{
-	*this = std::move(other);
-}
-
-Node::Node(const std::string &path)
+Node::Node(void) : _filter(NodeFilterType::WITHOUT_HIDDEN) {}
+Node::Node(NodeFilterType filter) : _filter(filter) {}
+Node::Node(const std::string &path, NodeFilterType filter) : _filter(filter)
 {
 	this->_is_inited = init(path);
 }
@@ -16,6 +11,11 @@ Node::Node(const std::string &path)
 Node::Node(const Node &other)
 {
 	*this = other;
+}
+
+Node::Node(Node &&other)
+{
+	*this = std::move(other);
 }
 
 Node::~Node(void) {}
@@ -30,11 +30,12 @@ Node &Node::operator=(const Node &other)
 		this->_size = other._size;
 		this->_type = other._type;
 		this->_permissions = other._permissions;
+		this->_filter = other._filter;
 	}
 	return (*this);
 }
 
-Node	&Node::operator=(const Node &&other)
+Node	&Node::operator=(Node &&other)
 {
 	if (this != &other)
 	{
@@ -45,25 +46,16 @@ Node	&Node::operator=(const Node &&other)
 		this->_type = std::move(other._type);
 		this->_permissions = std::move(other._permissions);
 		this->_is_inited = other._is_inited;
+		this->_filter = std::move(other._filter);
+		other = Node();
 	}
 	return (*this);
 }
 
-std::ostream& Node::print(std::ostream& os) const
-{
-	os
-		<< "CONTENT : "
-		<< this->getPath();
-	return os;
-}
-
-std::ostream& operator << ( std::ostream& os, const Node &node)
-{
-	return node.print(os);
-}
-
 bool	Node::init(const std::string &path)
 {
+	if (Node::checkFilter(path, this->_filter))
+		return (false);
 	if (stat(path.c_str(), &this->_stat) == -1)
 	{
 		perror(std::string("OPEN ( " + path+ " )").c_str());
@@ -72,7 +64,7 @@ bool	Node::init(const std::string &path)
 	this->_path = path;
 	this->_type = checkType(this->_stat);
 	this->_permissions = checkPermissions(this->_stat);
-	this->_name = (this->_type != NODE_DIRECTORY ? Utils::getFileName(path) : path);
+	this->_name = (this->_type != NodeType::DIRECTORY ? Utils::getFileName(path) : path);
 	this->_size = Utils::convert<std::size_t>(this->_stat.st_size);
 	return (true);
 }
@@ -82,21 +74,21 @@ NodeType	Node::checkType(Stat stat)
 	NodeType	type;
 
 	if (S_ISREG(stat.st_mode))
-		type = NODE_FILE;
+		type = NodeType::FILE;
 	else if (S_ISDIR(stat.st_mode))
-		type = NODE_DIRECTORY;
+		type = NodeType::DIRECTORY;
 	else if (S_ISLNK(stat.st_mode))
-		type = NODE_LINK;
+		type = NodeType::LINK;
 	else if (S_ISCHR(stat.st_mode))
-		type = NODE_SCHAR;
+		type = NodeType::SCHAR;
 	else if (S_ISBLK(stat.st_mode))
-		type = NODE_BLOC;
+		type = NodeType::BLOC;
 	else if (S_ISFIFO(stat.st_mode))
-		type = NODE_FIFO;
+		type = NodeType::FIFO;
 	else if (S_ISSOCK(stat.st_mode))
-		type = NODE_SOCKET;
+		type = NodeType::SOCKET;
 	else
-		type = NODE_UNKNOW;
+		type = NodeType::UNKNOW;
 	return (type);
 }
 
@@ -114,4 +106,13 @@ Node::permissions	Node::checkPermissions(Stat stat)
 	permissions.other.write = (stat.st_mode & S_IWOTH);
 	permissions.other.execute = (stat.st_mode & S_IXOTH);
 	return (permissions);
+}
+
+bool	Node::checkFilter(const std::string &path, const NodeFilterType &filter)
+{
+	if (filter == NodeFilterType::WITHOUT_HIDDEN)
+		return (path.size() > 1 && path[0] != '.' && path[1] != '/');
+	if (filter == NodeFilterType::ONLY_HIDDEN)
+		return (path.size() > 1 && path[0] == '.' && path[1] != '/');
+	return (true);
 }
