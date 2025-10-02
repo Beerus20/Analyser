@@ -30,7 +30,7 @@ SystemTree &SystemTree::operator=(SystemTree &&other) noexcept
 
 std::ostream& SystemTree::print(std::ostream& os) const
 {
-	std::cout << this->_infos << std::endl;
+	std::cout << this->_infos.dump(4) << std::endl;
 	return os;
 }
 
@@ -38,6 +38,12 @@ std::ostream& operator << ( std::ostream& os, const SystemTree &systemtree)
 {
 	return systemtree.print(os);
 }
+
+bool	SystemTree::load(const std::string &path, std::size_t deep)
+{
+	return (SystemTree::load(path, this->_infos, deep));
+}
+
 
 bool	SystemTree::load(const std::string &path, json &data, std::size_t deep)
 {

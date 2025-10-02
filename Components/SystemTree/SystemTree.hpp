@@ -25,20 +25,22 @@ class SystemTree : public Node
 		};
 
 		SystemTree (void);
+		SystemTree(const std::string &path, int deep = -1);
 		SystemTree (const SystemTree &);
 		SystemTree (SystemTree &&) noexcept;
 		virtual ~SystemTree (void);
 		SystemTree &operator=(const SystemTree &);
 		SystemTree &operator=(SystemTree &&) noexcept;
 
-		std::ostream& print(std::ostream& os) const;
+		std::ostream& 	print(std::ostream& os) const;
+		bool			load(const std::string &path, std::size_t deep = 1);
 
-		bool	load(const std::string &path, json &data, std::size_t deep = 1);
 
 	private:
 		json			_infos;
 
 		std::string		checkPath(const std::string &path);
+		bool			load(const std::string &path, json &data, std::size_t deep = 1);
 		bool			loadDirectory(const std::string &path, json &data, std::size_t deep = 0);
 		void			initJsonInfo(json &data);
 };

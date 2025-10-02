@@ -8,8 +8,8 @@ int	main(int, char **argv)
 	std::cout << "Analyser initialisation" << std::endl;
 	SystemTree	tree;
 
-	tree.load(argv[1], SystemTree::tree,1);
-	std::cout << SystemTree::tree.dump(3) << std::endl;
+	tree.load(argv[1],1);
+	std::cout << tree << std::endl;
 
 	return (0);
 }
