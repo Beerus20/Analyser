@@ -1,4 +1,4 @@
-include files.mk
+include mk/files.mk
 
 NAME			= analyser
 CXXVERSION		= 98
@@ -23,7 +23,6 @@ clean			:
 					@rm -rf $(MAIN_OBJS)
 
 fclean			: clean
-					@$(MAKE) fclean -C ./cppUnit52
 					@rm -rf $(NAME)
 
 re				: fclean all
@@ -31,5 +30,5 @@ re				: fclean all
 
 .PHONY			: all clean fclean re
 
-include rules.mk
-include functions.mk
+include mk/rules.mk
+include mk/functions.mk

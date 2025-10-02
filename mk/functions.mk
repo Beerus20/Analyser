@@ -3,7 +3,7 @@ TOTAL = $(words $(OBJS))
 # CREATION ==========================================================
 define create_object
 	@$(CXX) $(CXXFLAGS) -c $(1) -o $(2)
-	@./progress_bar.sh output $(TOTAL)
+	@./mk/progress_bar.sh output $(TOTAL)
 endef
 
 define create_executable
@@ -11,18 +11,16 @@ define create_executable
 endef
 
 define runner
-	@$(MAKE) lib -C cppUnit52
-	@$(call create_executable, $(OBJS) $(1), $(NAME), -I./cppUnit52, -L./cppUnit52 -lcppUnit)
+	@$(call create_executable, $(OBJS) $(1), $(NAME))
 	$(2) ./$(NAME) $(ARGS)
 	@rm -rf $(NAME)
 endef
 
 define loop_run
-	@$(MAKE) lib -C cppUnit52
 	@status=0;\
 	for file in $(1); do \
 		echo "\e[4;34m $$file :\e[0;m"; \
-		if ! $(call create_executable, $(OBJS) $$file, $(NAME), -I./cppUnit52, -L./cppUnit52 -lcppUnit) ; then \
+		if ! $(call create_executable, $(OBJS) $$file, $(NAME)) ; then \
 			exit 1; \
 		fi; \
 		if ! ./$(NAME) $(ARGS) ; then \
