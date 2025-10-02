@@ -1,7 +1,7 @@
 include mk/files.mk
 
 NAME			= analyser
-CXXVERSION		= 98
+CXXVERSION		= 11
 CXX				= c++
 CXXFLAGS		= -Wall -Wextra -Werror -std=c++$(CXXVERSION) -g
 MAKEFLAGS 		+= --no-print-directory
