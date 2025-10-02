@@ -16,6 +16,7 @@ typedef struct dirent *		Dirent;
 class SystemTree : public Node
 {
 	public:
+		static json	tree;
 		enum status
 		{
 			SUCCESS,
@@ -28,8 +29,8 @@ class SystemTree : public Node
 		SystemTree &operator = (const SystemTree&);
 		std::ostream& print(std::ostream& os) const;
 
-		bool	load(const std::string &path, std::size_t deep = 1);
-		bool	loadDirectory(const std::string &path, std::size_t deep = 0);
+		bool	load(const std::string &path, json &data, std::size_t deep = 1);
+		bool	loadDirectory(const std::string &path, json &data, std::size_t deep = 0);
 
 		// accessors
 		const std::vector<SystemTree>		&getNodes(void) const;
