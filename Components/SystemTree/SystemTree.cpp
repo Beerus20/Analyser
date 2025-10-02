@@ -3,37 +3,30 @@
 #include <cstddef>
 #include <cstdio>
 #include <string>
-#include <vector>
 #include "Node.hpp"
 
 json	SystemTree::tree;
 
-SystemTree::SystemTree(void) : _status(FAILED)
-{
-	this->_infos[PATHS] = std::vector<std::string>();
-	this->_infos[NAMES] = std::vector<std::string>();
-}
-
+SystemTree::SystemTree(void) {}
 SystemTree::SystemTree(const SystemTree &other) : Node(other) { *this = other; }
+SystemTree::SystemTree(const SystemTree &&other) : Node(std::move(other)) { *this = std::move(other); }
 SystemTree::~SystemTree(void) {}
 SystemTree &SystemTree::operator=(const SystemTree &other)
 {
 	if (this != &other)
-	{
-		this->_infos[PATHS] = other._infos[PATHS];
-		this->_infos[NAMES] = other._infos[NAMES];
-		this->_deep = other._deep;
-		this->_nodes = other._nodes;
-		this->_status = other._status;
-	}
+		this->_infos = other._infos;
+	return (*this);
+}
+
+SystemTree &SystemTree::operator=(const SystemTree &&other)
+{
+	if (this != &other)
+		this->_infos = std::move(other._infos);
 	return (*this);
 }
 
 std::ostream& SystemTree::print(std::ostream& os) const
 {
-	os << this->getPath() << std::endl;
-	for (std::vector<SystemTree>::const_iterator node(this->_nodes.begin()); node != this->_nodes.end(); node++)
-		os << *node;
 	return os;
 }
 
@@ -57,7 +50,6 @@ bool	SystemTree::load(const std::string &path, json &data, std::size_t deep)
 	}
 	if (this->getType() == NODE_UNKNOW)
 		return (this->clear(), false);
-	this->_status = SUCCESS;
 	return (true);
 }
 
@@ -67,7 +59,6 @@ bool	SystemTree::loadDirectory(const std::string &path, json &data, std::size_t 
 	Dirent			content;
 	std::string		name;
 
-	(void)deep;
 	dir = opendir(path.c_str());
 	if (dir == NULL)
 		return (false);
@@ -91,11 +82,6 @@ bool	SystemTree::loadDirectory(const std::string &path, json &data, std::size_t 
 
 void	SystemTree::clear(void)
 {
-	this->_nodes.clear();
-	this->_infos[NAMES].clear();
-	this->_infos[PATHS].clear();
-	this->_deep = 1;
-	this->_status = FAILED;
 }
 
 std::string	SystemTree::checkPath(const std::string &path)
@@ -115,18 +101,3 @@ std::string	SystemTree::checkPath(const std::string &path)
 		tmp = "./" + tmp;
 	return (tmp);
 }
-
-const SystemTree	*SystemTree::findNode(const std::string &path)
-{
-	std::string	tmp_path(this->checkPath(path));
-
-	if (this->getPath() == tmp_path)
-		return (this);
-	for (std::size_t i(0); i < this->_nodes.size(); i++)
-	{
-		if (tmp_path.compare(0,this->_nodes[i].getPathSize(), this->_nodes[i].getPath()) == 0)
-			return (this->_nodes[i].findNode(tmp_path));
-	}
-	return (NULL);
-}
-
