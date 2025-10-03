@@ -1,5 +1,6 @@
 #include "Log/Log.hpp"
 
+// tester project
 int	main(void)
 {
 	Log::addFilter(Log::ERROR);
