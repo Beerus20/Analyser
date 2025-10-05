@@ -23,6 +23,7 @@ clean			:
 					@rm -rf $(MAIN_OBJS)
 
 fclean			: clean
+					@if [ -f $(NAME).a ]; then rm $(NAME).a; fi
 					@rm -rf $(NAME)
 
 re				: fclean all
