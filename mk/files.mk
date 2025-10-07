@@ -1,7 +1,11 @@
 DIRECTORIES					= \
+								Converter						\
 								Data
 
-DIR_UTILS					= \
+DIR_CONVERTER				= \
+								Converter.cpp
+
+DIR_DATA					= \
 								Data.cpp
 
 FILES						= \
