@@ -1,9 +1,8 @@
 DIRECTORIES					= \
-								Utils									\
+								Data
 
 DIR_UTILS					= \
-								Data.cpp								\
-								Utils.cpp
+								Data.cpp
 
 FILES						= \
 								$(foreach dir, $(DIRECTORIES), \

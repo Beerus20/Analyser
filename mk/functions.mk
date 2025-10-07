@@ -1,15 +1,6 @@
 TOTAL = $(words $(OBJS))
 
 # CREATION ==========================================================
-#define create_object
-#	@$(CXX) $(CXXFLAGS) $(LIBS_INCLUDES) -c $(1) -o $(2) $(LIBS_FILES)
-#	@./mk/progress_bar.sh output $(TOTAL)
-#endef
-
-#define create_executable
-#	$(CXX) $(CXXFLAGS) $(3) $(1) -o $(2) $(4)
-#endef
-
 define make_loop_libs
 	echo -n "CALL make loop LIBS\n"
 	@$(foreach path, $(LIBS_PATH), \

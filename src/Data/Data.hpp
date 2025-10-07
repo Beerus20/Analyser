@@ -3,7 +3,6 @@
 
 # include <iostream>
 # include "../../includes/Analyser.hpp"
-# include "Utils.hpp"
 
 class Data
 {
