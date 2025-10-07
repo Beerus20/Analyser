@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "Components/Components.hpp"
-#include "Components/SystemTree/SystemTree.hpp"
+#include "includes/Analyser.hpp"
 
 int	main(int, char **argv)
 {

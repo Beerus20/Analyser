@@ -1,6 +1,21 @@
 TOTAL = $(words $(OBJS))
 
 # CREATION ==========================================================
+#define create_object
+#	@$(CXX) $(CXXFLAGS) $(LIBS_INCLUDES) -c $(1) -o $(2) $(LIBS_FILES)
+#	@./mk/progress_bar.sh output $(TOTAL)
+#endef
+
+#define create_executable
+#	$(CXX) $(CXXFLAGS) $(3) $(1) -o $(2) $(4)
+#endef
+
+define make_loop_libs
+	echo -n "CALL make loop LIBS\n"
+	@$(foreach path, $(LIBS_PATH), \
+		$(MAKE) $(1) -C $(path))
+endef
+
 define create_object
 	@$(CXX) $(CXXFLAGS) -c $(1) -o $(2)
 	@./mk/progress_bar.sh output $(TOTAL)
@@ -11,7 +26,11 @@ define create_executable
 endef
 
 define runner
-	@$(call create_executable, $(OBJS) $(1), $(NAME))
+	@$(call create_executable, \
+		$(OBJS) $(1), \
+		$(NAME), \
+		$(LIBS_INCLUDES), \
+		$(LIBS_FILES))
 	$(2) ./$(NAME) $(ARGS)
 	@rm -rf $(NAME)
 endef
@@ -43,7 +62,7 @@ output/%.o: $(1)/%.cpp | output
 	@$(call create_object, $$<, $$@)
 endef
 
-$(foreach dir, $(DIRECTORIES), $(eval $(call create_rule, Components/$(dir))))
+$(foreach dir, $(DIRECTORIES), $(eval $(call create_rule, src/$(dir))))
 
 
 # GIT ==========================================================

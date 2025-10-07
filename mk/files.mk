@@ -1,21 +1,13 @@
 DIRECTORIES					= \
 								Utils									\
-								SystemTree
 
 DIR_UTILS					= \
 								Data.cpp								\
 								Utils.cpp
 
-DIR_SYSTEMTREE				= \
-								Node.accessors.cpp						\
-								Node.cpp								\
-								SystemTree.accessors.cpp				\
-								SystemTree.cpp
-
-
 FILES						= \
 								$(foreach dir, $(DIRECTORIES), \
-									$(addprefix Components/$(dir)/, $(DIR_$(shell echo $(dir) | tr a-z A-Z))) \
+									$(addprefix src/$(dir)/, $(DIR_$(shell echo $(dir) | tr a-z A-Z))) \
 								)
 
 OBJS						= \
@@ -36,3 +28,22 @@ TEST_FILES					= \
 								)
 
 FILES_NOT_TESTED			= $(filter-out $(TEST_FILES), $(TO_TEST_FILES))
+
+
+LIB_EMPLACEMENT				= ../
+LIBS						= libftcpp
+LIBS_EXT					= ftcpp
+LIBS_PATH					= $(addprefix $(LIB_EMPLACEMENT),$(LIBS))
+
+LIBS_INCLUDES				= \
+								$(foreach i, $(shell seq 1 $(words $(LIBS))), \
+									-I$(word $(i),$(LIBS_PATH))/includes)
+
+LIBS_FILES					= \
+								$(foreach i, $(shell seq 1 $(words $(LIBS))), \
+									-L$(word $(i),$(LIBS_PATH)) \
+									-l$(word $(i),$(LIBS_EXT)))
+
+#echo :
+#		echo $(LIBS_INCLUDES)
+#		echo $(LIBS_FILES)

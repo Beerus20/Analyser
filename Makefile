@@ -16,18 +16,21 @@ endif
 
 all				: $(NAME)
 
-$(NAME)			: $(MAIN_OBJS)
-					@$(call create_executable, $^, $@)
+$(NAME)			: $(MAIN_OBJS) | create_dep_lib
+					$(call create_executable, $^, $@, $(LIBS_INCLUDES), $(LIBS_FILES))
 
 clean			:
 					@rm -rf $(MAIN_OBJS)
 
 fclean			: clean
+					$(call make_loop_libs, fclean)
 					@if [ -f $(NAME).a ]; then rm $(NAME).a; fi
 					@rm -rf $(NAME)
 
 re				: fclean all
 
+create_dep_lib	:
+					$(call make_loop_libs, lib)
 
 .PHONY			: all clean fclean re
 
