@@ -62,3 +62,6 @@ create_dep_lib		:
 
 status				:
 						@git status
+
+echo				:
+						echo test
