@@ -29,9 +29,6 @@ fclean			: clean
 
 re				: fclean all
 
-create_dep_lib	:
-					$(call make_loop_libs, lib)
-
 .PHONY			: all clean fclean re
 
 include mk/rules.mk

@@ -57,3 +57,5 @@ push\:%		:
 lib			: $(OBJS)
 				ar rcs $(NAME).a $(OBJS)
 
+create_dep_lib	:
+					$(call make_loop_libs, lib)

@@ -2,7 +2,6 @@ TOTAL = $(words $(OBJS))
 
 # CREATION ==========================================================
 define make_loop_libs
-	echo -n "CALL make loop LIBS\n"
 	@$(foreach path, $(LIBS_PATH), \
 		$(MAKE) $(1) -C $(path))
 endef
