@@ -4,7 +4,7 @@ include mk/variables.mk
 all				: $(NAME)
 
 $(NAME)			: $(MAIN_OBJS) | create_dep_lib
-					$(call create_executable, $^, $@, $(LIBS_INCLUDES), $(LIBS_FILES))
+					@$(call create_executable, $^, $@, $(LIBS_INCLUDES), $(LIBS_FILES))
 
 clean			:
 					@rm -rf $(MAIN_OBJS)

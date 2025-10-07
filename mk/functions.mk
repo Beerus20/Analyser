@@ -12,7 +12,7 @@ define create_object
 endef
 
 define create_executable
-	$(CXX) $(CXXFLAGS) $(3) $(1) -o $(2) $(4)
+	@$(CXX) $(CXXFLAGS) $(3) $(1) -o $(2) $(4)
 endef
 
 define runner
