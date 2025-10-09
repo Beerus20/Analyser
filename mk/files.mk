@@ -3,6 +3,7 @@ DIRECTORIES					= \
 								Data
 
 DIR_CONVERTER				= \
+								Converter.statics.cpp			\
 								Converter.cpp
 
 DIR_DATA					= \

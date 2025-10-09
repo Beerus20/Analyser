@@ -1,8 +1,6 @@
 #include "Converter.hpp"
 #include <vector>
 
-std::size_t	Converter::level(0);
-
 Converter::Converter(void) {}
 Converter::Converter(const Converter &) {}
 Converter::~Converter(void) {}
@@ -27,26 +25,65 @@ void	Converter::lineToJson(const std::string &line, void *container)
 {
 	(void)line;
 	(void)container;
-	std::istringstream	ss(line);
 	std::string			tmp;
-	static int			nb(0);
-	//bool				has_keyword(false);
+	std::string			key("");
 
-	nb++;
-	while (!ss.eof())
+	Converter::_text.setContent(line);
+	while (!Converter::_text.eof())
 	{
-		ss >> tmp;
-		for (std::size_t i(0); i < Utils::keyword.size(); i++)
-		{
-			if (tmp == Utils::keyword[i])
-			{
-				std::cout << "[" << nb << "]" << std::endl;
-				std::cout << "  " << Utils::trim(line) << std::endl;
-				break ;
-			}
-		}
+		Converter::_text >> tmp;
+		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+			key += (key.empty() ? "" : ",") + tmp;
+		else
+			break ;
 		//std::cout << "\t" << tmp << std::endl;
 	}
 	//std::cout << std::endl;
 	//json	*values = reinterpret_cast<json *>(container);
+}
+
+void	Converter::initInfo(std::string &identifier, json *container)
+{
+	if (container == NULL)
+		return ;
+	if (container->find("classes") == container->end())
+		(*container)["classes"] = json::array();
+	(*container)["classes"].push_back({
+		{"type", identifier} ,
+		{"name", ""} ,
+		{"inheritance", json::array()} ,
+		{"variables", json::array()} ,
+		{"functions", json::array()}
+	});
+}
+
+void	Converter::addInfo(std::string &identifier, json *container)
+{
+	if (container == NULL || container->find("classes") == container->end())
+		return ;
+	std::string	tmp("");
+
+	while (Converter::_text.eof())
+	{
+		Converter::_text >> tmp;
+		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+			break;
+	}
+
+	if (identifier.find('(') != std::string::npos && identifier.find(')') != std::string::npos)
+	{
+		(*container)["classes"].back()["functions"].push_back({
+			{"name", identifier.substr(0, identifier.find('('))} ,
+			{"returnType", ""} ,
+			{"parameters", json::array()}
+		});
+	}
+	else
+	{
+		(*container)["classes"].back()["variables"].push_back({
+			{"name", identifier} ,
+			{"type", ""} ,
+			{"value", ""}
+		});
+	}
 }

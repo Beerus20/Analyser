@@ -7,7 +7,9 @@
 class Converter
 {  
 	private:
-		static std::size_t	level;
+		static Text								_text;
+		static std::size_t						_level;
+		static const std::vector<std::string>	_keywords;
 
 		Converter(void);
 		Converter(const Converter &other);
@@ -22,6 +24,9 @@ class Converter
 		static void	showLine(const std::string &line);
 		static void	isVariable(const std::string &line);
 		static void	isFunction(const std::string &line);
+
+		static void	initInfo(std::string &identifier, json *container);
+		static void	addInfo(std::string &identifier, json *container);
 };
 
 #endif
