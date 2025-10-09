@@ -7,9 +7,11 @@
 class Converter
 {  
 	private:
-		static Text								_text;
-		static std::size_t						_level;
-		static const std::vector<std::string>	_keywords;
+		static Text						_text;
+		static std::size_t				_level;
+		static const Vector::string		_keywords;
+
+		
 
 		Converter(void);
 		Converter(const Converter &other);
@@ -27,6 +29,7 @@ class Converter
 
 		static void	initInfo(std::string &identifier, json *container);
 		static void	addInfo(std::string &identifier, json *container);
+
 };
 
 #endif

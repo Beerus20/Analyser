@@ -1,5 +1,8 @@
 #include "Converter.hpp"
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <regex>
 
 Converter::Converter(void) {}
 Converter::Converter(const Converter &) {}
@@ -26,16 +29,16 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	(void)line;
 	(void)container;
 	std::string			tmp;
-	std::string			key("");
+	//std::string			key("");
 
 	Converter::_text.setContent(line);
 	while (!Converter::_text.eof())
 	{
 		Converter::_text >> tmp;
-		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
-			key += (key.empty() ? "" : ",") + tmp;
-		else
-			break ;
+		//if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+		//	key += (key.empty() ? "" : ",") + tmp;
+		//else
+		//	break ;
 		//std::cout << "\t" << tmp << std::endl;
 	}
 	//std::cout << std::endl;
@@ -66,7 +69,7 @@ void	Converter::addInfo(std::string &identifier, json *container)
 	while (Converter::_text.eof())
 	{
 		Converter::_text >> tmp;
-		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+		//if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
 			break;
 	}
 

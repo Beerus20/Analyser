@@ -58,7 +58,7 @@ $(foreach dir, $(DIRECTORIES), $(eval $(call create_rule, src/$(dir))))
 # GIT ==========================================================
 define create_commit
 	@if [ -n "$$(git status --porcelain)" ]; then \
-		if [ -n $(Y) ]; then \
+		if [ -n "$(Y)" ]; then \
 			RESP="$(Y)"; \
 		else \
 			read -p "Do you want to commit changes? (y/n): " RESP; \
