@@ -66,9 +66,14 @@ void	Converter::initContainer(std::string &identifier, json *container)
 		{"variables", json::array()} ,
 		{"functions", json::array()}
 	});
-	if (Converter::_text.hasFoundSeparator(":"));
+
+	if (Converter::_text.hasFoundSeparator(":"))
+	{
+		
+	}
 	while (!Converter::_text.getFoundSeparators().empty())
 	{
+
 	}
 }
 
