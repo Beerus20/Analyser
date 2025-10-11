@@ -5,5 +5,4 @@
 # include "../../libftcpp/includes/libftcpp.hpp"
 # include "../../libftcpp/includes/Color.hpp"
 
-
 #endif

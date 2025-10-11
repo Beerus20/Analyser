@@ -15,7 +15,8 @@ Converter	&Converter::operator=(const Converter &)
 void	Converter::headerFile(const std::string &path)
 {
 	(void)path;
-	Utils::readLines(path, NULL, Converter::lineToJson);
+	Converter::_text.addSeparators(":{};(),");
+	Utils::readLines(path, &Converter::_data, Converter::lineToJson);
 }
 
 void	Converter::showLine(const std::string &line)
@@ -29,35 +30,55 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	(void)line;
 	(void)container;
 	std::string			tmp;
-	//std::string			key("");
+	std::string			key("");
 
 	Converter::_text.setContent(line);
 	while (!Converter::_text.eof())
 	{
 		Converter::_text >> tmp;
-		//if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
-		//	key += (key.empty() ? "" : ",") + tmp;
-		//else
-		//	break ;
+		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+			Converter::initContainer(tmp, reinterpret_cast<json *>(container));
+			//key += (key.empty() ? "" : ",") + tmp;
 		//std::cout << "\t" << tmp << std::endl;
 	}
-	//std::cout << std::endl;
-	//json	*values = reinterpret_cast<json *>(container);
 }
 
-void	Converter::initInfo(std::string &identifier, json *container)
+void	Converter::initContainer(std::string &identifier, json *container)
 {
+	std::string	tmp("");
+
 	if (container == NULL)
 		return ;
-	if (container->find("classes") == container->end())
-		(*container)["classes"] = json::array();
-	(*container)["classes"].push_back({
+	if (container->find("containers") == container->end())
+		(*container)["containers"] = json::array();
+	while (1)
+	{
+		Converter::_text >> tmp;
+		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+			identifier += " " + tmp;
+		else
+			break ;
+	}
+	(*container)["containers"].push_back({
 		{"type", identifier} ,
-		{"name", ""} ,
+		{"name", tmp} ,
 		{"inheritance", json::array()} ,
 		{"variables", json::array()} ,
 		{"functions", json::array()}
 	});
+	if (Converter::_text.hasFoundSeparator(":"));
+	while (!Converter::_text.getFoundSeparators().empty())
+	{
+	}
+}
+
+void	Converter::addContainer(std::string &identifier, json *container)
+{
+	(void)identifier;
+	(void)container;
+	if (container == NULL || container->find("classes") == container->end())
+		return ;
+	
 }
 
 void	Converter::addInfo(std::string &identifier, json *container)

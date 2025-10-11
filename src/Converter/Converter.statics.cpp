@@ -8,3 +8,4 @@ const Vector::string	Converter::_keywords = {
 	"enum",
 	"typedef"
 };
+json					Converter::_data = json();

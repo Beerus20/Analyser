@@ -10,7 +10,6 @@ class Converter
 		static Text						_text;
 		static std::size_t				_level;
 		static const Vector::string		_keywords;
-
 		
 
 		Converter(void);
@@ -18,6 +17,8 @@ class Converter
 		Converter	&operator=(const Converter &other);
 
 	public:
+		static json						_data;
+
 		virtual ~Converter(void);
 
 		static void	headerFile(const std::string &path);
@@ -27,7 +28,8 @@ class Converter
 		static void	isVariable(const std::string &line);
 		static void	isFunction(const std::string &line);
 
-		static void	initInfo(std::string &identifier, json *container);
+		static void	addContainer(std::string &identifier, json *container);
+		static void	initContainer(std::string &identifier, json *container);
 		static void	addInfo(std::string &identifier, json *container);
 
 };
