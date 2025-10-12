@@ -9,7 +9,7 @@ class Converter
 	private:
 		static Text						_text;
 		static std::size_t				_level;
-		static const Vector::string		_keywords;
+		static const Vector::string		_object_keywords;
 		
 
 		Converter(void);

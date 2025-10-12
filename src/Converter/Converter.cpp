@@ -36,7 +36,7 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	while (!Converter::_text.eof())
 	{
 		Converter::_text >> tmp;
-		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+		if (Utils::find(Converter::_object_keywords, tmp) != Converter::_object_keywords.end())
 			Converter::initContainer(tmp, reinterpret_cast<json *>(container));
 			//key += (key.empty() ? "" : ",") + tmp;
 		//std::cout << "\t" << tmp << std::endl;
@@ -54,7 +54,7 @@ void	Converter::initContainer(std::string &identifier, json *container)
 	while (1)
 	{
 		Converter::_text >> tmp;
-		if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+		if (Utils::find(Converter::_object_keywords, tmp) != Converter::_object_keywords.end())
 			identifier += " " + tmp;
 		else
 			break ;
@@ -95,7 +95,7 @@ void	Converter::addInfo(std::string &identifier, json *container)
 	while (Converter::_text.eof())
 	{
 		Converter::_text >> tmp;
-		//if (Utils::find(Converter::_keywords, tmp) != Converter::_keywords.end())
+		//if (Utils::find(Converter::_object_keywords, tmp) != Converter::_object_keywords.end())
 			break;
 	}
 

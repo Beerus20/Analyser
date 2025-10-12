@@ -2,7 +2,7 @@
 
 Text					Converter::_text;
 std::size_t				Converter::_level(0);
-const Vector::string	Converter::_keywords = {
+const Vector::string	Converter::_object_keywords = {
 	"class",
 	"struct",
 	"enum",
