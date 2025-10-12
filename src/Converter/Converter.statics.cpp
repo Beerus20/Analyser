@@ -9,3 +9,4 @@ const Vector::string	Converter::_object_keywords = {
 	"typedef"
 };
 json					Converter::_data = json();
+t_tmp					Converter::_tmp = {"", ""};

@@ -4,13 +4,19 @@
 # include <iostream>
 # include "../../includes/dependencies.hpp"
 
+typedef struct s_tmp
+{
+	std::string	type;
+	std::string	name;
+} t_tmp;
+
 class Converter
-{  
+{
 	private:
 		static Text						_text;
 		static std::size_t				_level;
 		static const Vector::string		_object_keywords;
-		
+		static t_tmp					_tmp;
 
 		Converter(void);
 		Converter(const Converter &other);

@@ -15,7 +15,7 @@ Converter	&Converter::operator=(const Converter &)
 void	Converter::headerFile(const std::string &path)
 {
 	(void)path;
-	Converter::_text.addSeparators(":{};(),");
+	Converter::_text.addSeparators("{};(),");
 	Utils::readLines(path, &Converter::_data, Converter::lineToJson);
 }
 
@@ -29,18 +29,23 @@ void	Converter::lineToJson(const std::string &line, void *container)
 {
 	(void)line;
 	(void)container;
-	std::string			tmp;
 	std::string			key("");
 
 	Converter::_text.setContent(line);
-	while (!Converter::_text.eof())
+	if (Converter::_text.getContent().empty())
+		return ;
+	while (1)
 	{
-		Converter::_text >> tmp;
-		if (Utils::find(Converter::_object_keywords, tmp) != Converter::_object_keywords.end())
-			Converter::initContainer(tmp, reinterpret_cast<json *>(container));
-			//key += (key.empty() ? "" : ",") + tmp;
-		//std::cout << "\t" << tmp << std::endl;
+		Converter::_text >> Converter::_tmp.name;
+		if (Converter::_text.hasFoundSeparator("{(;") || Converter::_text.eof())
+			break ;
+		else if (!Converter::_text.eof())
+			Converter::_tmp.type += " " + Converter::_tmp.name;
 	}
+	std::cout
+		<< "Type : " << Converter::_tmp.type << std::endl
+		<< "Name : " << Converter::_tmp.name << std::endl << std::endl;
+	Converter::_tmp = {"", ""};
 }
 
 void	Converter::initContainer(std::string &identifier, json *container)
