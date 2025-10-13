@@ -8,6 +8,7 @@ typedef struct s_tmp
 {
 	std::string	type;
 	std::string	name;
+	s_tmp(const std::string &type, const std::string &name) : type(type), name(name) {}
 } t_tmp;
 
 class Converter
@@ -23,7 +24,7 @@ class Converter
 		Converter	&operator=(const Converter &other);
 
 	public:
-		static json						_data;
+		static Json						_data;
 
 		virtual ~Converter(void);
 
@@ -34,9 +35,8 @@ class Converter
 		static void	isVariable(const std::string &line);
 		static void	isFunction(const std::string &line);
 
-		static void	addContainer(std::string &identifier, json *container);
-		static void	initContainer(std::string &identifier, json *container);
-		static void	addInfo(std::string &identifier, json *container);
+		static void	initData(Json &container);
+		static void	initContainer(std::string &identifier, Json *container);
 
 };
 

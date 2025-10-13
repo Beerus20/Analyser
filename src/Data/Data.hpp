@@ -7,16 +7,16 @@
 class Data
 {
 	private:
-		json	_content;
+		Json	_content;
 
 	public:
 		Data(void);
 		Data(const Data &other);
 		virtual ~Data(void);
 		Data		&operator=(const Data &other);
-		json		&operator[](const std::string &key);
-		const json	&operator[](const std::string &key) const;
-		const json	&getContent(void) const;
+		Json		&operator[](const std::string &key);
+		const Json	&operator[](const std::string &key) const;
+		const Json	&getContent(void) const;
 };
 
 std::ostream	&operator<<(std::ostream &os, const Data &to_show);

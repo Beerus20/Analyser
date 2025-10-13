@@ -12,17 +12,17 @@ Data	&Data::operator=(const Data &other)
 	return (*this);
 }
 
-json	&Data::operator[](const std::string &key)
+Json	&Data::operator[](const std::string &key)
 {
 	return (this->_content[key]);
 }
 
-const json	&Data::operator[](const std::string &key) const
+const Json	&Data::operator[](const std::string &key) const
 {
 	return (this->_content[key]);
 }
 
-const json	&Data::getContent(void) const
+const Json	&Data::getContent(void) const
 {
 	return (this->_content);
 }

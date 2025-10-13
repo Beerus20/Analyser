@@ -8,5 +8,5 @@ const Vector::string	Converter::_object_keywords = {
 	"enum",
 	"typedef"
 };
-json					Converter::_data = json();
+Json					Converter::_data = Json();
 t_tmp					Converter::_tmp = {"", ""};
