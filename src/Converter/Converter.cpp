@@ -16,6 +16,10 @@ void	Converter::headerFile(const std::string &path)
 {
 	(void)path;
 	Converter::_text.addSeparators("{};(),");
+	Converter::_data = Json();
+	Converter::_data["class"] = Json::array();
+	Converter::_data["enum"] = Json::array();
+	Converter::_data["struct"] = Json::array();
 	Utils::readLines(path, &Converter::_data, Converter::lineToJson);
 }
 
@@ -33,11 +37,15 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	while (!Converter::_text.eof())
 	{
 		Converter::_text >> Converter::_tmp.name;
+		if (Converter::_text.hasFoundSeparator("}"))
+			Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) - 1;				
 		if (Converter::_text.hasFoundSeparator("{(;") || Converter::_text.eof())
 		{
-			std::cout
-				<< "Type : [" << Converter::_tmp.type << "]" << std::endl
-				<< "Name : " << Converter::_tmp.name << std::endl << std::endl;
+			if (Converter::_text.hasFoundSeparator("{"))
+				Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) + 1;				
+
+			if (!Converter::_tmp.type.empty() && !Converter::_tmp.name.empty())
+				Converter::initData(reinterpret_cast<Json *>(container));
 			break ;
 		}
 		else if (!Converter::_tmp.type.empty())
@@ -47,38 +55,78 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	Converter::_tmp = {"", ""};
 }
 
-void	Converter::initContainer(std::string &identifier, Json *container)
+void	Converter::initData(Json *container)
 {
-	std::string	tmp("");
+	if (Utils::find(Converter::_object_keywords, Converter::_tmp.type) != Converter::_object_keywords.end())
+	{
+		(*container)[Converter::_tmp.type].push_back({
+			{"name", Converter::_tmp.name},
+			{"inheritances", Json::array()},
+			{"variables", Json::array()},
+			{"functions", Json::array()}
+		});
+		Converter::_info["name"] = Converter::_tmp.name;
+		Converter::_info["type"] = Converter::_tmp.type;
+	}
+	if (!static_cast<std::size_t>(Converter::_info.at("level")))
+		return ;
+	if (Converter::_text.hasFoundSeparator("("))
+	{
+		Converter::addInfo("functions", container);
+	}
+	else
+	{
+		Converter::addInfo("variables", container);
+	}
+}
 
+void	Converter::addInfo(const std::string &type, Json *container)
+{
+	Json	&tmp((*container)[Converter::_info["type"]]);
+
+	for (std::size_t i(0); tmp.size(); i++)
+	{
+		if (tmp[i].at("name") == Converter::_info.at("name"))
+		{
+			tmp[i][type].push_back({
+				{(type == "functions" ? "return type" : "type"), Converter::_tmp.type},
+				{"name", Converter::_tmp.name}
+			});
+			break ;
+		}
+	}
+}
+
+void	Converter::initContainer(Json *container)
+{
 	if (container == NULL)
 		return ;
 	if (container->find("containers") == container->end())
 		(*container)["containers"] = Json::array();
-	while (1)
+	while (!Converter::_text.eof())
 	{
-		Converter::_text >> tmp;
-		if (Utils::find(Converter::_object_keywords, tmp) != Converter::_object_keywords.end())
-			identifier += " " + tmp;
-		else
+		Converter::_text >> Converter::_tmp.name;
+		if (Converter::_text.hasFoundSeparator("}"))
+			Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) - 1;				
+		if (Converter::_text.hasFoundSeparator("{(;") || Converter::_text.eof())
+		{
+			if (Converter::_text.hasFoundSeparator("{"))
+				Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) + 1;				
+
+			if (!Converter::_tmp.type.empty() && !Converter::_tmp.name.empty())
+				Converter::initData(reinterpret_cast<Json *>(container));
 			break ;
+		}
+		else if (!Converter::_tmp.type.empty())
+			Converter::_tmp.type += " ";
+		Converter::_tmp.type += Converter::_tmp.name;
 	}
-	(*container)["containers"].push_back({
-		{"type", identifier} ,
-		{"name", tmp} ,
-		{"inheritance", Json::array()} ,
-		{"variables", Json::array()} ,
-		{"functions", Json::array()}
-	});
-
-	if (Converter::_text.hasFoundSeparator(":"))
-	{
-		
-	}
-	while (!Converter::_text.getFoundSeparators().empty())
-	{
-
-	}
+	//(*container)["containers"].push_back({
+	//	{"name", tmp} ,
+	//	{"inheritance", Json::array()} ,
+	//	{"variables", Json::array()} ,
+	//	{"functions", Json::array()}
+	//});
 }
 
 //void	Converter::addInfo(std::string &identifier, json *container)

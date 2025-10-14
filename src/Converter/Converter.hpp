@@ -4,13 +4,14 @@
 # include <iostream>
 # include "../../includes/dependencies.hpp"
 
-typedef struct s_tmp
+struct s_tmp
 {
 	std::string	type;
 	std::string	name;
 	s_tmp(const std::string &type, const std::string &name) : type(type), name(name) {}
-} t_tmp;
+};
 
+typedef struct s_tmp t_tmp;
 class Converter
 {
 	private:
@@ -18,6 +19,7 @@ class Converter
 		static std::size_t				_level;
 		static const Vector::string		_object_keywords;
 		static t_tmp					_tmp;
+		static Json						_info;
 
 		Converter(void);
 		Converter(const Converter &other);
@@ -35,9 +37,10 @@ class Converter
 		static void	isVariable(const std::string &line);
 		static void	isFunction(const std::string &line);
 
-		static void	initData(Json &container);
-		static void	initContainer(std::string &identifier, Json *container);
-
+		static void	initData(Json *container);
+		static void	initContainer(Json *container);
+		
+		static void	addInfo(const std::string &type, Json *container);
 };
 
 #endif

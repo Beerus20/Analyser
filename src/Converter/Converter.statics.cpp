@@ -10,3 +10,9 @@ const Vector::string	Converter::_object_keywords = {
 };
 Json					Converter::_data = Json();
 t_tmp					Converter::_tmp = {"", ""};
+Json					Converter::_info = {
+	{"type", ""},
+	{"name", ""},
+	{"id", 0},
+	{"level", 0}
+};
