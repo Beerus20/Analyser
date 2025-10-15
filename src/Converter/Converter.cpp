@@ -16,6 +16,7 @@ void	Converter::headerFile(const std::string &path)
 {
 	(void)path;
 	Converter::_text.addSeparators("{};(),");
+	Converter::_text.addTmpSeparators(":");
 	Converter::_data = Json();
 	Converter::_data["class"] = Json::array();
 	Converter::_data["enum"] = Json::array();
@@ -114,32 +115,11 @@ void	Converter::initContainer(Json *container)
 {
 	if (container == NULL)
 		return ;
-	if (container->find("containers") == container->end())
-		(*container)["containers"] = Json::array();
 	while (!Converter::_text.eof())
 	{
 		Converter::_text >> Converter::_tmp.name;
-		if (Converter::_text.hasFoundSeparator("}"))
-			Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) - 1;				
-		if (Converter::_text.hasFoundSeparator("{(;") || Converter::_text.eof())
-		{
-			if (Converter::_text.hasFoundSeparator("{"))
-				Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) + 1;				
-
-			if (!Converter::_tmp.type.empty() && !Converter::_tmp.name.empty())
-				Converter::initData(reinterpret_cast<Json *>(container));
-			break ;
-		}
-		else if (!Converter::_tmp.type.empty())
-			Converter::_tmp.type += " ";
-		Converter::_tmp.type += Converter::_tmp.name;
+		//if (Utils::)
 	}
-	//(*container)["containers"].push_back({
-	//	{"name", tmp} ,
-	//	{"inheritance", Json::array()} ,
-	//	{"variables", Json::array()} ,
-	//	{"functions", Json::array()}
-	//});
 }
 
 //void	Converter::addInfo(std::string &identifier, json *container)
