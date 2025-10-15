@@ -37,14 +37,16 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	Converter::_text.setContent(line);
 	while (!Converter::_text.eof())
 	{
-		Converter::_text >> Converter::_tmp.name;
-		if (Utils::find(Converter::_object_keywords, Converter::_tmp.name) != Converter::_object_keywords.end())
+		Converter::_text.getWord();
+		if (Converter::_text.getCurrentWord().empty())
+			continue ;
+		if (Converter::_info.at("begin") == false)
 		{
-			if (Converter::_tmp.name == "typedef")
-			{
-				Converter::_tmp.td = true;
-				Converter::_text >> Converter::_tmp.name;;
-			}
+			Converter::initContainer(reinterpret_cast<Json *>(container));
+		}
+		else
+		{
+
 		}
 	}
 
@@ -69,6 +71,44 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	//Converter::_tmp = {"", ""};
 }
 
+void	Converter::initContainer(Json *container)
+{
+	if (container == NULL)
+		return ;
+	if (Converter::_info.at("container_has_inited") == false)
+	{
+		if (Utils::find(Converter::_object_keywords, Converter::_text.getCurrentWord()) == Converter::_object_keywords.end())
+			return ;
+		Converter::_info["id"] = static_cast<int>(Converter::_info["id"]) + 1;
+		(*container)[Converter::_text.getCurrentWord()].push_back({
+			{"name", ""},
+			{"inheritances", Json::array()},
+			{"variables", Json::array()},
+			{"functions", Json::array()}
+		});
+		Converter::_info["container_has_inited"] = true;
+	}
+	if (Converter::_info.at("container_name_getted") == false)
+	{
+		Converter::_text.setTmpSeparatorStatus(true);
+		Converter::_info["type"] = Converter::_text.getCurrentWord();
+		Converter::_text.setTmpSeparatorStatus(false);
+
+	}
+	while (!Converter::_text.eof())
+	{
+		if (Utils::find(Converter::_object_keywords, Converter::_text.getWord()) != Converter::_object_keywords.end())
+		{
+			Converter::_info["found_object_keyword"] = true;
+			break ;
+		}	
+	}
+	if (!Converter::_info["found_object_keyword"])
+		return ;
+	Converter::_tmp.type = Converter::_text.getCurrentWord();
+	//while ()
+}
+
 void	Converter::initData(Json *container)
 {
 	if (Utils::find(Converter::_object_keywords, Converter::_tmp.type) != Converter::_object_keywords.end())
@@ -81,16 +121,6 @@ void	Converter::initData(Json *container)
 		});
 		Converter::_info["name"] = Converter::_tmp.name;
 		Converter::_info["type"] = Converter::_tmp.type;
-	}
-	if (!static_cast<std::size_t>(Converter::_info.at("level")))
-		return ;
-	if (Converter::_text.hasFoundSeparator("("))
-	{
-		Converter::addInfo("functions", container);
-	}
-	else
-	{
-		Converter::addInfo("variables", container);
 	}
 }
 
@@ -111,23 +141,6 @@ void	Converter::addInfo(const std::string &type, Json *container)
 	}
 }
 
-void	Converter::initContainer(Json *container)
-{
-	if (container == NULL)
-		return ;
-	while (!Converter::_text.eof())
-	{
-		if (Utils::find(Converter::_object_keywords, Converter::_text.getWord()) != Converter::_object_keywords.end())
-		{
-			Converter::_info["found_object_keyword"] = true;
-			break ;
-		}	
-	}
-	if (!Converter::_info["found_object_keyword"])
-		return ;
-	Converter::_tmp.type = Converter::_text.getCurrentWord();
-	//while ()
-}
 
 //void	Converter::addInfo(std::string &identifier, json *container)
 //{

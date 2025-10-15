@@ -12,9 +12,11 @@ t_tmp					Converter::_tmp = {"", "", false};
 Json					Converter::_info = {
 	{"type", ""},
 	{"name", ""},
-	{"id", 0},
+	{"id", -1},
 	{"level", 0},
 	{"begin", false},
 	("hasInheritance", false),
-	{"found_object_keyword", false}
+	{"found_object_keyword", false},
+	{"container_has_inited", false},
+	{"container_name_getted", false}
 };
