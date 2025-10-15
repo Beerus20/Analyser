@@ -117,9 +117,16 @@ void	Converter::initContainer(Json *container)
 		return ;
 	while (!Converter::_text.eof())
 	{
-		Converter::_text >> Converter::_tmp.name;
-		//if (Utils::)
+		if (Utils::find(Converter::_object_keywords, Converter::_text.getWord()) != Converter::_object_keywords.end())
+		{
+			Converter::_info["found_object_keyword"] = true;
+			break ;
+		}	
 	}
+	if (!Converter::_info["found_object_keyword"])
+		return ;
+	Converter::_tmp.type = Converter::_text.getCurrentWord();
+	//while ()
 }
 
 //void	Converter::addInfo(std::string &identifier, json *container)
