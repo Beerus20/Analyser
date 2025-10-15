@@ -31,28 +31,41 @@ void	Converter::showLine(const std::string &line)
 void	Converter::lineToJson(const std::string &line, void *container)
 {
 	(void)container;
-	std::string			key("");
+	(void)line;
 
 	Converter::_text.setContent(line);
 	while (!Converter::_text.eof())
 	{
 		Converter::_text >> Converter::_tmp.name;
-		if (Converter::_text.hasFoundSeparator("}"))
-			Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) - 1;				
-		if (Converter::_text.hasFoundSeparator("{(;") || Converter::_text.eof())
+		if (Utils::find(Converter::_object_keywords, Converter::_tmp.name) != Converter::_object_keywords.end())
 		{
-			if (Converter::_text.hasFoundSeparator("{"))
-				Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) + 1;				
-
-			if (!Converter::_tmp.type.empty() && !Converter::_tmp.name.empty())
-				Converter::initData(reinterpret_cast<Json *>(container));
-			break ;
+			if (Converter::_tmp.name == "typedef")
+			{
+				Converter::_tmp.td = true;
+				Converter::_text >> Converter::_tmp.name;;
+			}
 		}
-		else if (!Converter::_tmp.type.empty())
-			Converter::_tmp.type += " ";
-		Converter::_tmp.type += Converter::_tmp.name;
 	}
-	Converter::_tmp = {"", ""};
+
+	//while (!Converter::_text.eof())
+	//{
+	//	Converter::_text >> Converter::_tmp.name;
+	//	if (Converter::_text.hasFoundSeparator("}"))
+	//		Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) - 1;				
+	//	if (Converter::_text.hasFoundSeparator("{(;") || Converter::_text.eof())
+	//	{
+	//		if (Converter::_text.hasFoundSeparator("{"))
+	//			Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) + 1;				
+
+	//		if (!Converter::_tmp.type.empty() && !Converter::_tmp.name.empty())
+	//			Converter::initData(reinterpret_cast<Json *>(container));
+	//		break ;
+	//	}
+	//	else if (!Converter::_tmp.type.empty())
+	//		Converter::_tmp.type += " ";
+	//	Converter::_tmp.type += Converter::_tmp.name;
+	//}
+	//Converter::_tmp = {"", ""};
 }
 
 void	Converter::initData(Json *container)

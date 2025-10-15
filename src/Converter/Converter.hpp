@@ -8,7 +8,8 @@ struct s_tmp
 {
 	std::string	type;
 	std::string	name;
-	s_tmp(const std::string &type, const std::string &name) : type(type), name(name) {}
+	bool		td;
+	s_tmp(const std::string &type, const std::string &name, bool td) : type(type), name(name), td(td) {}
 };
 
 typedef struct s_tmp t_tmp;
