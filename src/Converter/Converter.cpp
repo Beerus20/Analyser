@@ -38,48 +38,37 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	while (!Converter::_text.eof())
 	{
 		Converter::_text.getWord();
-		if (Converter::_text.getCurrentWord().empty())
-			continue ;
+		//if (Converter::_text.getCurrentWord().empty())
+		//	continue ;
 		if (Converter::_info.at("begin") == false)
 		{
-			Converter::initContainer(reinterpret_cast<Json *>(container));
+			if (!Converter::initContainer(reinterpret_cast<Json *>(container)))
+				break ;
 		}
 		else
 		{
-
+			if (Converter::_text.hasFoundSeparator("}"))
+			{
+				Converter::_info["begin"] = false;
+				Converter::_info["container_has_inited"] = false;
+				Converter::_info["container_name_getted"] = false;
+				Converter::_info["type"] = "";
+			}
 		}
 	}
-
-	//while (!Converter::_text.eof())
-	//{
-	//	Converter::_text >> Converter::_tmp.name;
-	//	if (Converter::_text.hasFoundSeparator("}"))
-	//		Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) - 1;				
-	//	if (Converter::_text.hasFoundSeparator("{(;") || Converter::_text.eof())
-	//	{
-	//		if (Converter::_text.hasFoundSeparator("{"))
-	//			Converter::_info["level"] = static_cast<std::size_t>(Converter::_info.at("level")) + 1;				
-
-	//		if (!Converter::_tmp.type.empty() && !Converter::_tmp.name.empty())
-	//			Converter::initData(reinterpret_cast<Json *>(container));
-	//		break ;
-	//	}
-	//	else if (!Converter::_tmp.type.empty())
-	//		Converter::_tmp.type += " ";
-	//	Converter::_tmp.type += Converter::_tmp.name;
-	//}
-	//Converter::_tmp = {"", ""};
 }
 
-void	Converter::initContainer(Json *container)
+bool	Converter::initContainer(Json *container)
 {
 	if (container == NULL)
-		return ;
+		return (false);
 	if (Converter::_info.at("container_has_inited") == false)
 	{
 		if (Utils::find(Converter::_object_keywords, Converter::_text.getCurrentWord()) == Converter::_object_keywords.end())
-			return ;
-		Converter::_info["id"] = static_cast<int>(Converter::_info["id"]) + 1;
+			return (false);
+		std::cout << "CONTAINER TYPE : " << Converter::_text.getCurrentWord() << std::endl;
+		Converter::_info["id"] = 0;
+		Converter::_info["type"] = Converter::_text.getCurrentWord();
 		(*container)[Converter::_text.getCurrentWord()].push_back({
 			{"name", ""},
 			{"inheritances", Json::array()},
@@ -87,26 +76,23 @@ void	Converter::initContainer(Json *container)
 			{"functions", Json::array()}
 		});
 		Converter::_info["container_has_inited"] = true;
+		Converter::_text.setTmpSeparatorStatus(true);
+		return (true);
 	}
 	if (Converter::_info.at("container_name_getted") == false)
 	{
-		Converter::_text.setTmpSeparatorStatus(true);
-		Converter::_info["type"] = Converter::_text.getCurrentWord();
+		//std::cout << "NAME CONTAINER : " << (*container)[Converter::_info["type"]][static_cast<int>(Converter::_info.at("id"))].dump(3) << std::endl;
+		(*container)[Converter::_info["type"]][static_cast<int>(Converter::_info.at("id"))]["name"] = Converter::_text.getCurrentWord();
 		Converter::_text.setTmpSeparatorStatus(false);
-
+		Converter::_info["container_name_getted"] = true;
 	}
-	while (!Converter::_text.eof())
-	{
-		if (Utils::find(Converter::_object_keywords, Converter::_text.getWord()) != Converter::_object_keywords.end())
-		{
-			Converter::_info["found_object_keyword"] = true;
-			break ;
-		}	
-	}
-	if (!Converter::_info["found_object_keyword"])
-		return ;
-	Converter::_tmp.type = Converter::_text.getCurrentWord();
-	//while ()
+	if (Converter::_text.hasFoundSeparator("{"))
+		Converter::_info["begin"] = true;
+	//if (Converter::_info.at("has_inheritance"))
+	//{
+	//	while ()
+	//}
+	return (true);
 }
 
 void	Converter::initData(Json *container)

@@ -13,6 +13,7 @@ struct s_tmp
 };
 
 typedef struct s_tmp t_tmp;
+
 class Converter
 {
 	private:
@@ -39,7 +40,7 @@ class Converter
 		static void	isFunction(const std::string &line);
 
 		static void	initData(Json *container);
-		static void	initContainer(Json *container);
+		static bool	initContainer(Json *container);
 		
 		static void	addInfo(const std::string &type, Json *container);
 };

@@ -15,7 +15,7 @@ Json					Converter::_info = {
 	{"id", -1},
 	{"level", 0},
 	{"begin", false},
-	("hasInheritance", false),
+	{"has_inheritance", false},
 	{"found_object_keyword", false},
 	{"container_has_inited", false},
 	{"container_name_getted", false}
