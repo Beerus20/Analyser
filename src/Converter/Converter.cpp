@@ -35,6 +35,15 @@ void	Converter::lineToJson(const std::string &line, void *container)
 	(void)line;
 
 	Converter::_text.setContent(line);
+	if (Converter::_info.at("begin") == false)
+	{
+		Converter::initContainer(reinterpret_cast<Json *>(container));
+	}
+	if (true)
+	{
+
+	}
+
 	while (!Converter::_text.eof())
 	{
 		Converter::_text.getWord();
@@ -42,11 +51,21 @@ void	Converter::lineToJson(const std::string &line, void *container)
 		//	continue ;
 		if (Converter::_info.at("begin") == false)
 		{
-			if (!Converter::initContainer(reinterpret_cast<Json *>(container)))
-				break ;
+			break ;
 		}
 		else
 		{
+			if (!Converter::_text.hasFoundSeparator(";("))
+				Converter::_tmp.type += Converter::_text.getCurrentWord() + " ";
+			if (Converter::_text.hasFoundSeparator(";("))
+			{
+				Converter::_tmp.name = Converter::_text.getCurrentWord();
+				if (Converter::_text.hasFoundSeparator(";"))
+					Converter::addInfo("variables", reinterpret_cast<Json *>(container));
+				else
+					Converter::addInfo("functions", reinterpret_cast<Json *>(container));
+				Converter::_tmp = {"", "", false};
+			}
 			if (Converter::_text.hasFoundSeparator("}"))
 			{
 				Converter::_info["begin"] = false;
@@ -56,6 +75,7 @@ void	Converter::lineToJson(const std::string &line, void *container)
 			}
 		}
 	}
+	Converter::_tmp = {"", "", false};
 }
 
 bool	Converter::initContainer(Json *container)
@@ -83,11 +103,11 @@ bool	Converter::initContainer(Json *container)
 	{
 		//std::cout << "NAME CONTAINER : " << (*container)[Converter::_info["type"]][static_cast<int>(Converter::_info.at("id"))].dump(3) << std::endl;
 		(*container)[Converter::_info["type"]][static_cast<int>(Converter::_info.at("id"))]["name"] = Converter::_text.getCurrentWord();
+		Converter::_info["name"] = Converter::_text.getCurrentWord();
 		Converter::_text.setTmpSeparatorStatus(false);
 		Converter::_info["container_name_getted"] = true;
 	}
-	if (Converter::_text.hasFoundSeparator("{"))
-		Converter::_info["begin"] = true;
+	Converter::_info["begin"] = Converter::_text.hasFoundSeparator("{");
 	//if (Converter::_info.at("has_inheritance"))
 	//{
 	//	while ()
@@ -112,10 +132,16 @@ void	Converter::initData(Json *container)
 
 void	Converter::addInfo(const std::string &type, Json *container)
 {
+	(void)type;
+	(void)container;
 	Json	&tmp((*container)[Converter::_info["type"]]);
 
-	for (std::size_t i(0); tmp.size(); i++)
+	if (Converter::_tmp.type.empty() || Converter::_tmp.name.empty())
+		return ;
+	for (std::size_t i(0); i < tmp.size(); i++)
 	{
+		std::cout << "TMP NAME : " << tmp[i].at("name") << std::endl;
+		std::cout << "info NAME : " << Converter::_info.at("name") << std::endl;
 		if (tmp[i].at("name") == Converter::_info.at("name"))
 		{
 			tmp[i][type].push_back({
