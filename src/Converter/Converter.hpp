@@ -15,7 +15,8 @@ struct s_tmp
 
 typedef struct s_tmp t_tmp;
 
-class Converter {
+class Converter
+{
 	private:
 		static Text						_text;
 		static std::size_t				_level;

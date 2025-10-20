@@ -55,7 +55,6 @@ void	Converter::lineToJson(const std::string &line, void *container)
 void	Converter::getInfo(void)
 {
 	std::string	tmp("");
-	bool		active(false);
 
 	while (!Converter::_text.eof())
 	{
@@ -68,33 +67,21 @@ void	Converter::getInfo(void)
 		//	std::cout << "Size : " << Converter::_text.getSize() << std::endl;
 		//	active = false;
 		//}
-		if (tmp == "class")
-		{
-			active = true;
-		}
-
-		if (!Converter::_tmp.type.empty() && Converter::_text.testFoundSeparators(::isspace))
+		if (!Converter::_tmp.type.empty() && Converter::_text.testFoundSeparators(Utils::isspace))
 			Converter::_tmp.type += " ";
-		if (!Converter::_text.testFoundSeparators(::isspace) || Converter::_text.eof())
+		if (!Converter::_text.testFoundSeparators(Utils::isspace) || Converter::_text.eof())
 		{
-			if (active)
-				std::cout << "TMP VALUE : " << tmp << std::endl;
 			if (!tmp.empty())
 				Converter::_tmp.name = tmp;
 			break ;
 		}
-		if (Converter::_text.testFoundSeparators(::isspace))
+		if (Converter::_text.testFoundSeparators(Utils::isspace))
 		{
 			if (!tmp.empty())
 				Converter::_tmp.type += tmp;
 		}
 	}
-	if (Converter::_tmp.type.find("class") != std::string::npos)
-	{
-		Converter::_text.showFoundSeparators();
-		std::cout << "FOUND SEPARATOR OTHER : " << (!Converter::_text.testFoundSeparators(::isspace) ? "TRUE" : "FALSE") << std::endl;
-	}
-	if (!Converter::_text.testFoundSeparators(::isspace))
+	if (!Converter::_text.testFoundSeparators(Utils::isspace))
 	{
 		std::cout
 			<< "type : [" << Converter::_tmp.type << "]" << std::endl
