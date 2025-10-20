@@ -10,12 +10,12 @@ struct s_tmp
 	std::string	name;
 	bool		td;
 	s_tmp(const std::string &type, const std::string &name, bool td) : type(type), name(name), td(td) {}
+	bool	isEmpty(void) { return (type.empty() || name.empty());}
 };
 
 typedef struct s_tmp t_tmp;
 
-class Converter
-{
+class Converter {
 	private:
 		static Text						_text;
 		static std::size_t				_level;
