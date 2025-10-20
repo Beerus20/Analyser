@@ -1,4 +1,6 @@
 #include "Converter.hpp"
+#include <cctype>
+#include <string>
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -21,6 +23,7 @@ void	Converter::headerFile(const std::string &path)
 	Converter::_data["class"] = Json::array();
 	Converter::_data["enum"] = Json::array();
 	Converter::_data["struct"] = Json::array();
+	Converter::_data["test"] = Json::array();
 	Utils::readLines(path, &Converter::_data, Converter::lineToJson);
 }
 
@@ -33,154 +36,52 @@ void	Converter::lineToJson(const std::string &line, void *container)
 {
 	(void)container;
 	(void)line;
+	static Json	*data(reinterpret_cast<Json *>(container));
 
+	(void)data;
+	if (container == NULL)
+		return ;
 	Converter::_text.setContent(line);
-	if (Converter::_info.at("begin") == false)
-	{
-		Converter::initContainer(reinterpret_cast<Json *>(container));
-	}
-	if (true)
-	{
+	Converter::getInfo();
+	//if (Converter::_info.at("begin") == false)
+	//{
+	//	Converter::getContainer(data);
+	//}
+	//else {
+	
+	//}
+}
 
-	}
+void	Converter::getInfo(void)
+{
+	std::string	tmp("");
 
 	while (!Converter::_text.eof())
 	{
-		Converter::_text.getWord();
-		//if (Converter::_text.getCurrentWord().empty())
-		//	continue ;
-		if (Converter::_info.at("begin") == false)
+		Converter::_text >> tmp;
+		if (!Converter::_tmp.type.empty() && !Converter::_text.hasFoundSeparatorOther(" "))
+			Converter::_tmp.type += " ";
+		if (!Converter::_text.testFoundSeparators(::isspace) || Converter::_text.eof())
 		{
+			Converter::_tmp.name = tmp;
 			break ;
 		}
-		else
+		if (Converter::_text.testFoundSeparators(::isspace))
 		{
-			if (!Converter::_text.hasFoundSeparator(";("))
-				Converter::_tmp.type += Converter::_text.getCurrentWord() + " ";
-			if (Converter::_text.hasFoundSeparator(";("))
-			{
-				Converter::_tmp.name = Converter::_text.getCurrentWord();
-				if (Converter::_text.hasFoundSeparator(";"))
-					Converter::addInfo("variables", reinterpret_cast<Json *>(container));
-				else
-					Converter::addInfo("functions", reinterpret_cast<Json *>(container));
-				Converter::_tmp = {"", "", false};
-			}
-			if (Converter::_text.hasFoundSeparator("}"))
-			{
-				Converter::_info["begin"] = false;
-				Converter::_info["container_has_inited"] = false;
-				Converter::_info["container_name_getted"] = false;
-				Converter::_info["type"] = "";
-			}
+			Converter::_tmp.type += tmp;
 		}
 	}
-	Converter::_tmp = {"", "", false};
-}
-
-bool	Converter::initContainer(Json *container)
-{
-	if (container == NULL)
-		return (false);
-	if (Converter::_info.at("container_has_inited") == false)
+	if (Converter::_text.hasFoundSeparatorOther(" "))
 	{
-		if (Utils::find(Converter::_object_keywords, Converter::_text.getCurrentWord()) == Converter::_object_keywords.end())
-			return (false);
-		std::cout << "CONTAINER TYPE : " << Converter::_text.getCurrentWord() << std::endl;
-		Converter::_info["id"] = 0;
-		Converter::_info["type"] = Converter::_text.getCurrentWord();
-		(*container)[Converter::_text.getCurrentWord()].push_back({
-			{"name", ""},
-			{"inheritances", Json::array()},
-			{"variables", Json::array()},
-			{"functions", Json::array()}
-		});
-		Converter::_info["container_has_inited"] = true;
-		Converter::_text.setTmpSeparatorStatus(true);
-		return (true);
-	}
-	if (Converter::_info.at("container_name_getted") == false)
-	{
-		//std::cout << "NAME CONTAINER : " << (*container)[Converter::_info["type"]][static_cast<int>(Converter::_info.at("id"))].dump(3) << std::endl;
-		(*container)[Converter::_info["type"]][static_cast<int>(Converter::_info.at("id"))]["name"] = Converter::_text.getCurrentWord();
-		Converter::_info["name"] = Converter::_text.getCurrentWord();
-		Converter::_text.setTmpSeparatorStatus(false);
-		Converter::_info["container_name_getted"] = true;
-	}
-	Converter::_info["begin"] = Converter::_text.hasFoundSeparator("{");
-	//if (Converter::_info.at("has_inheritance"))
-	//{
-	//	while ()
-	//}
-	return (true);
-}
-
-void	Converter::initData(Json *container)
-{
-	if (Utils::find(Converter::_object_keywords, Converter::_tmp.type) != Converter::_object_keywords.end())
-	{
-		(*container)[Converter::_tmp.type].push_back({
-			{"name", Converter::_tmp.name},
-			{"inheritances", Json::array()},
-			{"variables", Json::array()},
-			{"functions", Json::array()}
-		});
-		Converter::_info["name"] = Converter::_tmp.name;
-		Converter::_info["type"] = Converter::_tmp.type;
+		std::cout
+			<< "type : [" << Converter::_tmp.type << "]" << std::endl
+			<< "name : [" << Converter::_tmp.name << "]" << std::endl << std::endl;
+		Converter::_tmp = {"", "", false};
 	}
 }
 
-void	Converter::addInfo(const std::string &type, Json *container)
+void	Converter::getContainer(Json *container)
 {
-	(void)type;
 	(void)container;
-	Json	&tmp((*container)[Converter::_info["type"]]);
-
-	if (Converter::_tmp.type.empty() || Converter::_tmp.name.empty())
-		return ;
-	for (std::size_t i(0); i < tmp.size(); i++)
-	{
-		std::cout << "TMP NAME : " << tmp[i].at("name") << std::endl;
-		std::cout << "info NAME : " << Converter::_info.at("name") << std::endl;
-		if (tmp[i].at("name") == Converter::_info.at("name"))
-		{
-			tmp[i][type].push_back({
-				{(type == "functions" ? "return type" : "type"), Converter::_tmp.type},
-				{"name", Converter::_tmp.name}
-			});
-			break ;
-		}
-	}
+	//if (Utils::find(Converter::_object_keywords, Converter::_text.g))
 }
-
-
-//void	Converter::addInfo(std::string &identifier, json *container)
-//{
-//	if (container == NULL || container->find("classes") == container->end())
-//		return ;
-//	std::string	tmp("");
-
-//	while (Converter::_text.eof())
-//	{
-//		Converter::_text >> tmp;
-//		//if (Utils::find(Converter::_object_keywords, tmp) != Converter::_object_keywords.end())
-//			break;
-//	}
-
-//	if (identifier.find('(') != std::string::npos && identifier.find(')') != std::string::npos)
-//	{
-//		(*container)["classes"].back()["functions"].push_back({
-//			{"name", identifier.substr(0, identifier.find('('))} ,
-//			{"returnType", ""} ,
-//			{"parameters", Json::array()}
-//		});
-//	}
-//	else
-//	{
-//		(*container)["classes"].back()["variables"].push_back({
-//			{"name", identifier} ,
-//			{"type", ""} ,
-//			{"value", ""}
-//		});
-//	}
-//}

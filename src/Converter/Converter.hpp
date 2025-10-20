@@ -36,13 +36,19 @@ class Converter
 		static void	lineToJson(const std::string &line, void *);
 		
 		static void	showLine(const std::string &line);
-		static void	isVariable(const std::string &line);
-		static void	isFunction(const std::string &line);
 
-		static void	initData(Json *container);
-		static bool	initContainer(Json *container);
-		
-		static void	addInfo(const std::string &type, Json *container);
+		static void	getContainer(Json *container);
+		static void	getInfo(void);
+};
+
+class Base 
+{
+
+};
+
+class Test : public Base
+{
+
 };
 
 #endif
